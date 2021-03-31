@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def get_pagerank_scores(graph, d=0.85, epsilon=0.000001):
     n, _ = graph.shape
     row_normalized_matrix = np.copy(graph)
@@ -13,7 +14,8 @@ def get_pagerank_scores(graph, d=0.85, epsilon=0.000001):
     page_rank = np.ones(n)/n
     while True:
         previous_page_rank = page_rank
-        page_rank = (np.dot(row_normalized_matrix.T, previous_page_rank) + (np.ones(n)/n)*np.dot(sink_nodes, previous_page_rank))*d + np.ones(n)*(1 - d)/n
+        page_rank = (np.dot(row_normalized_matrix.T, previous_page_rank) + (np.ones(n)/n)
+                     * np.dot(sink_nodes, previous_page_rank))*d + np.ones(n)*(1 - d)/n
         page_rank /= np.sum(page_rank)
         difference = np.sum(np.abs(page_rank - previous_page_rank))
         if difference < epsilon:
