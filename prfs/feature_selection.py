@@ -1,4 +1,4 @@
-from prfs.feature_graphs import CorrelationDistanceGraph
+from prfs.feature_graphs import CorrelationDistanceGraph, MutualInformationGraph
 from prfs.pagerank import get_pagerank_scores
 
 
@@ -23,6 +23,11 @@ class PageRankFeatureSelector():
 
         if self.method == 'correlation_distance':
             self.feature_graph_adjacency_matrix = CorrelationDistanceGraph(
+                X, y).adjacency_matrix
+            self.feature_pagerank_scores = get_pagerank_scores(
+                self.feature_graph_adjacency_matrix)
+        elif self.method == 'mutual_information':
+            self.feature_graph_adjacency_matrix = MutualInformationGraph(
                 X, y).adjacency_matrix
             self.feature_pagerank_scores = get_pagerank_scores(
                 self.feature_graph_adjacency_matrix)
