@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_pagerank_scores(graph, d=0.85, epsilon=0.000001):
+def calculate_pagerank_scores(graph, d=0.85, epsilon=0.000001):
     n, _ = graph.shape
     row_normalized_matrix = np.copy(graph)
     sink_nodes = np.zeros(n, dtype=np.float64)
