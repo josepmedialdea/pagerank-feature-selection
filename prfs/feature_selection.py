@@ -1,5 +1,5 @@
 from prfs.graphs import FeatureGraph, FeatureLabelGraph
-from prfs.functions import correlation, uncorrelation
+from prfs.functions import correlation, uncorrelation, sparse_correlation, sparse_uncorrelation
 
 class PageRankFeatureSelector():
 
@@ -10,11 +10,19 @@ class PageRankFeatureSelector():
             self.alpha = correlation
         elif alpha == 'uncorrelation':
             self.alpha = uncorrelation
+        elif alpha == 'sparse_correlation':
+            self.alpha = sparse_correlation
+        elif alpha == 'sparse_uncorrelation':
+            self.alpha = sparse_uncorrelation
         
         if beta == 'correlation':
             self.beta = correlation
         elif beta == 'uncorrelation':
             self.beta = uncorrelation
+        elif beta == 'sparse_correlation':
+            self.beta = sparse_correlation
+        elif beta == 'sparse_uncorrelation':
+            self.beta = sparse_uncorrelation
 
         self.weight = weight
 

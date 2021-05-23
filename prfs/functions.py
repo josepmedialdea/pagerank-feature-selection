@@ -11,3 +11,19 @@ def correlation(x1, x2):
 
 def uncorrelation(x1, x2):
     return 1 - correlation(x1, x2)
+
+def sparse_correlation(x1, x2):
+    x1_x2_correlation = correlation(x1, x2)
+
+    if x1_x2_correlation >= 0.5:
+        return x1_x2_correlation
+    else:
+        return 0
+
+def sparse_uncorrelation(x1, x2):
+    x1_x2_uncorrelation = uncorrelation(x1, x2)
+    
+    if x1_x2_uncorrelation >= 0.5:
+        return x1_x2_uncorrelation
+    else:
+        return 0
