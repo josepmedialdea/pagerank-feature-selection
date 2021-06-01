@@ -1,7 +1,19 @@
 import numpy as np
+from scipy.stats import spearmanr
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
 
 
-def correlation(x1, x2):
+def correlation(features, labels, i, j):
+    _, n_features = features.shape
+
+    if j == n_features:
+        x1 = features[:, i]
+        x2 = labels
+    else:
+        x1 = features[:, i]
+        x2 = features[:, j]
+
     covariance = np.cov(x1, x2)[0, 1]
 
     x1_variance = np.var(x1, ddof=1)
@@ -9,21 +21,64 @@ def correlation(x1, x2):
 
     return np.abs(covariance/(np.sqrt(x1_variance*x2_variance)))
 
-def uncorrelation(x1, x2):
-    return 1 - correlation(x1, x2)
 
-def sparse_correlation(x1, x2):
-    x1_x2_correlation = correlation(x1, x2)
+def uncorrelation(features, labels, i, j):
+    return 1 - correlation(features, labels, i, j)
+
+
+def sparse_correlation(features, labels, i, j):
+    x1_x2_correlation = correlation(features, labels, i, j)
 
     if x1_x2_correlation >= 0.5:
         return x1_x2_correlation
     else:
         return 0
 
-def sparse_uncorrelation(x1, x2):
-    x1_x2_uncorrelation = uncorrelation(x1, x2)
-    
-    if x1_x2_uncorrelation >= 0.5:
+
+def sparse_uncorrelation(features, labels, i, j):
+    x1_x2_uncorrelation = uncorrelation(features, labels, i, j)
+
+    if x1_x2_uncorrelation >= 0.8:
         return x1_x2_uncorrelation
     else:
         return 0
+
+
+def spearman_correlation(features, labels, i, j):
+    _, n_features = features.shape
+
+    if j == n_features:
+        x1 = features[:, i]
+        x2 = labels
+    else:
+        x1 = features[:, i]
+        x2 = features[:, j]
+
+    scorr, p_value = spearmanr(features, labels, i, j)
+    return np.abs(scorr)
+
+
+def spearman_uncorrelation(features, labels, i, j):
+    return 1 - spearman_correlation(features, labels, i, j)
+
+
+def accuracy(features, labels, i, j):
+    _, n_features = features.shape
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        features, labels, test_size=0.33)
+
+    clf = DecisionTreeClassifier()
+    
+    clf.fit(X_train[:, i].reshape(-1, 1), y_train)
+
+    accuracy_only_fi = clf.score(X_train[:, i].reshape(-1, 1), y_train)
+
+    if j == n_features:
+        return accuracy_only_fi
+    
+    clf.fit(X_train[:, [i, j]], y_train)
+
+    accuracy_fi_fj = clf.score(X_train[:, [i, j]], y_train)
+
+    return np.maximum(accuracy_fi_fj - accuracy_only_fi, 0)

@@ -12,7 +12,7 @@ class FeatureSelectionGraph(ABC):
             feature_score_dict[feature_name] = self.pagerank_scores[i]
 
         return feature_score_dict
-    
+
     def select(self, n):
         if n > len(self.feature_names):
             raise Exception('n > number of features')
@@ -24,7 +24,7 @@ class FeatureSelectionGraph(ABC):
         n_best_features = sorted_feature_names[:n]
 
         return n_best_features
-    
+
     @abstractmethod
     def show(self):
         pass
@@ -43,18 +43,15 @@ class FeatureGraph(FeatureSelectionGraph):
         labels_np = labels.to_numpy()
 
         _, n_features = features_np.shape
-        
+
         self.adjacency_matrix = np.zeros(
             n_features*n_features).reshape(n_features, n_features)
 
         for feature_i in range(n_features):
             for feature_j in range(n_features):
                 if feature_i != feature_j:
-                    feature_i_values = features_np[:, feature_i]
-                    feature_j_values = features_np[:, feature_j]
-
                     self.adjacency_matrix[feature_i, feature_j] = alpha(
-                        feature_j_values, labels_np) + weight*beta(feature_i_values, feature_j_values)
+                        features_np, labels_np, feature_j, n_features) + weight*beta(features_np, labels_np, feature_i, feature_j)
 
         self.pagerank_scores = calculate_pagerank_scores(self.adjacency_matrix)
 
@@ -94,25 +91,19 @@ class FeatureLabelGraph(FeatureSelectionGraph):
         labels_np = labels.to_numpy()
 
         _, n_features = features_np.shape
-        
+
         self.adjacency_matrix = np.zeros(
             (n_features + 1)*(n_features + 1)).reshape(n_features + 1, n_features + 1)
 
         for feature_i in range(n_features):
             for feature_j in range(n_features):
                 if feature_i != feature_j:
-                    feature_i_values = features_np[:, feature_i]
-                    feature_j_values = features_np[:, feature_j]
-
                     self.adjacency_matrix[feature_i, feature_j] = weight * \
-                        beta(feature_i_values, feature_j_values)
+                        beta(features_np, labels_np, feature_i, feature_j)
 
         for feature in range(n_features):
-            feature_values = features_np[:, feature]
-
             self.adjacency_matrix[feature, n_features] = 1
-            self.adjacency_matrix[n_features, feature] = alpha(
-                feature_values, labels_np)
+            self.adjacency_matrix[n_features, feature] = alpha(features_np, labels_np, feature, n_features)
 
         self.pagerank_scores = calculate_pagerank_scores(self.adjacency_matrix)
 
@@ -127,7 +118,8 @@ class FeatureLabelGraph(FeatureSelectionGraph):
         labels = {}
         for i, label in enumerate(self.feature_names):
             labels[i] = label + f'\n{self.pagerank_scores[i]:.4f}'
-        labels[len(labels)] = f'Target \n{self.pagerank_scores[len(labels)]:.4f}'
+        labels[len(labels)
+               ] = f'Target \n{self.pagerank_scores[len(labels)]:.4f}'
 
         nx.draw_networkx_nodes(G, pos, node_color='r',
                                node_size=self.pagerank_scores*1000+1000)

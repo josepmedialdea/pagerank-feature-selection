@@ -1,5 +1,5 @@
 from prfs.graphs import FeatureGraph, FeatureLabelGraph
-from prfs.functions import correlation, uncorrelation, sparse_correlation, sparse_uncorrelation
+from prfs.functions import correlation, uncorrelation, sparse_correlation, sparse_uncorrelation, accuracy
 
 class PageRankFeatureSelector():
 
@@ -14,6 +14,14 @@ class PageRankFeatureSelector():
             self.alpha = sparse_correlation
         elif alpha == 'sparse_uncorrelation':
             self.alpha = sparse_uncorrelation
+        elif alpha == 'spearman_correlation':
+            self.alpha = sparse_correlation
+        elif alpha == 'spearman_uncorrelation':
+            self.alpha = sparse_uncorrelation
+        elif alpha == 'accuracy':
+            self.alpha = accuracy
+        else:
+            raise Exception(f'No alpha function named {alpha}')
         
         if beta == 'correlation':
             self.beta = correlation
@@ -23,6 +31,14 @@ class PageRankFeatureSelector():
             self.beta = sparse_correlation
         elif beta == 'sparse_uncorrelation':
             self.beta = sparse_uncorrelation
+        elif beta == 'spearman_correlation':
+            self.beta = sparse_correlation
+        elif beta == 'spearman_uncorrelation':
+            self.beta = sparse_uncorrelation
+        elif beta == 'accuracy':
+            self.beta = accuracy
+        else:
+            raise Exception(f'No beta function named {beta}')
 
         self.weight = weight
 
@@ -49,6 +65,19 @@ class PageRankFeatureSelector():
                 'fit(features, labels) needs to be called before calling select(n)')
 
         return self.graph.select(n)
+
+    def ranking(self):
+        if not self.fit_called:
+            raise Exception(
+                'fit(features, labels) needs to be called before calling get_feature_scores()')
+
+        ordered_features = self.select(len(self.graph.feature_names))
+        rank = 1
+        ranking = 'RANKING\n------\n'
+        for feature in ordered_features:
+            ranking += f'{rank}: {feature}\n'
+            rank += 1
+        return ranking
 
     def show_graph(self):
         if not self.fit_called:
