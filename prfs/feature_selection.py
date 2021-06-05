@@ -1,11 +1,12 @@
 from prfs.graphs import FeatureGraph, FeatureLabelGraph
-from prfs.functions import correlation, uncorrelation, sparse_correlation, sparse_uncorrelation, accuracy
+from prfs.functions import correlation, uncorrelation, sparse_correlation, sparse_uncorrelation, accuracy, mutual_information
+
 
 class PageRankFeatureSelector():
 
     def __init__(self, graph='feature', alpha='correlation', beta='uncorrelation', weight=1):
         self.graph_type = graph
-        
+
         if alpha == 'correlation':
             self.alpha = correlation
         elif alpha == 'uncorrelation':
@@ -20,9 +21,11 @@ class PageRankFeatureSelector():
             self.alpha = sparse_uncorrelation
         elif alpha == 'accuracy':
             self.alpha = accuracy
+        elif alpha == 'mutual_information':
+            self.alpha = mutual_information
         else:
-            raise Exception(f'No alpha function named {alpha}')
-        
+            raise Exception(f'Unknown alpha function named {alpha}')
+
         if beta == 'correlation':
             self.beta = correlation
         elif beta == 'uncorrelation':
@@ -38,7 +41,7 @@ class PageRankFeatureSelector():
         elif beta == 'accuracy':
             self.beta = accuracy
         else:
-            raise Exception(f'No beta function named {beta}')
+            raise Exception(f'Unknown beta function named {beta}')
 
         self.weight = weight
 
@@ -46,9 +49,11 @@ class PageRankFeatureSelector():
 
     def fit(self, features, labels):
         if self.graph_type == 'feature':
-            self.graph = FeatureGraph(features, labels, self.alpha, self.beta, self.weight)
+            self.graph = FeatureGraph(
+                features, labels, self.alpha, self.beta, self.weight)
         elif self.graph_type == 'feature_label':
-            self.graph = FeatureLabelGraph(features, labels, self.alpha, self.beta, self.weight)
+            self.graph = FeatureLabelGraph(
+                features, labels, self.alpha, self.beta, self.weight)
 
         self.fit_called = True
 

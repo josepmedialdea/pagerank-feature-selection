@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import spearmanr
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import mutual_info_classif
 
 
 def correlation(features, labels, i, j):
@@ -69,16 +70,28 @@ def accuracy(features, labels, i, j):
         features, labels, test_size=0.33)
 
     clf = DecisionTreeClassifier()
-    
+
     clf.fit(X_train[:, i].reshape(-1, 1), y_train)
 
     accuracy_only_fi = clf.score(X_train[:, i].reshape(-1, 1), y_train)
 
     if j == n_features:
         return accuracy_only_fi
-    
+
     clf.fit(X_train[:, [i, j]], y_train)
 
     accuracy_fi_fj = clf.score(X_train[:, [i, j]], y_train)
 
     return np.maximum(accuracy_fi_fj - accuracy_only_fi, 0)
+
+
+def mutual_information(features, labels, i, j):
+    _, n_features = features.shape
+
+    if not (j == n_features):
+        raise Exception(
+            'mutual_information must be used as the alpha function (i.e. only between feature-target relations)')
+
+    mi = mutual_info_classif(features[:, i].reshape(-1, 1), labels)
+
+    return mi
