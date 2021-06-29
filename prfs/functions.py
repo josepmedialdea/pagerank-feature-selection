@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.stats import spearmanr
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import mutual_info_classif
 
@@ -69,7 +69,7 @@ def accuracy(features, labels, i, j):
     X_train, X_test, y_train, y_test = train_test_split(
         features, labels, test_size=0.33)
 
-    clf = DecisionTreeClassifier()
+    clf = GaussianNB()
 
     clf.fit(X_train[:, i].reshape(-1, 1), y_train)
 
