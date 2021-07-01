@@ -1,24 +1,22 @@
 from prfs.graphs import FeatureGraph, FeatureLabelGraph
-from prfs.functions import correlation, uncorrelation, sparse_correlation, sparse_uncorrelation, accuracy, mutual_information
+from prfs.functions import correlation, spearman_correlation, spearman_uncorrelation, uncorrelation, accuracy, mutual_information
 
 
 class PageRankFeatureSelector():
 
     def __init__(self, graph='feature', alpha='correlation', beta='uncorrelation', weight=1):
+        if graph != 'feature' and graph != 'feature_label':
+            raise Exception(f'Unknown graph type named {graph}')
         self.graph_type = graph
 
         if alpha == 'correlation':
             self.alpha = correlation
         elif alpha == 'uncorrelation':
             self.alpha = uncorrelation
-        elif alpha == 'sparse_correlation':
-            self.alpha = sparse_correlation
-        elif alpha == 'sparse_uncorrelation':
-            self.alpha = sparse_uncorrelation
         elif alpha == 'spearman_correlation':
-            self.alpha = sparse_correlation
+            self.alpha = spearman_correlation
         elif alpha == 'spearman_uncorrelation':
-            self.alpha = sparse_uncorrelation
+            self.alpha = spearman_uncorrelation
         elif alpha == 'accuracy':
             self.alpha = accuracy
         elif alpha == 'mutual_information':
@@ -30,14 +28,10 @@ class PageRankFeatureSelector():
             self.beta = correlation
         elif beta == 'uncorrelation':
             self.beta = uncorrelation
-        elif beta == 'sparse_correlation':
-            self.beta = sparse_correlation
-        elif beta == 'sparse_uncorrelation':
-            self.beta = sparse_uncorrelation
         elif beta == 'spearman_correlation':
-            self.beta = sparse_correlation
+            self.beta = spearman_correlation
         elif beta == 'spearman_uncorrelation':
-            self.beta = sparse_uncorrelation
+            self.beta = spearman_uncorrelation
         elif beta == 'accuracy':
             self.beta = accuracy
         else:

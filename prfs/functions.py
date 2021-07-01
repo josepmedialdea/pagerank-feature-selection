@@ -27,24 +27,6 @@ def uncorrelation(features, labels, i, j):
     return 1 - correlation(features, labels, i, j)
 
 
-def sparse_correlation(features, labels, i, j):
-    x1_x2_correlation = correlation(features, labels, i, j)
-
-    if x1_x2_correlation >= 0.5:
-        return x1_x2_correlation
-    else:
-        return 0
-
-
-def sparse_uncorrelation(features, labels, i, j):
-    x1_x2_uncorrelation = uncorrelation(features, labels, i, j)
-
-    if x1_x2_uncorrelation >= 0.8:
-        return x1_x2_uncorrelation
-    else:
-        return 0
-
-
 def spearman_correlation(features, labels, i, j):
     _, n_features = features.shape
 
@@ -55,7 +37,7 @@ def spearman_correlation(features, labels, i, j):
         x1 = features[:, i]
         x2 = features[:, j]
 
-    scorr, p_value = spearmanr(features, labels, i, j)
+    scorr, p_value = spearmanr(x1, x2)
     return np.abs(scorr)
 
 
